@@ -104,7 +104,6 @@ class GifCreator
             } elseif (is_string($thisFrame)) { // File path or URL or Binary source code
 
                 if (file_exists($thisFrame) || filter_var($thisFrame, FILTER_VALIDATE_URL)) { // File path
-
                     $thisFrame = file_get_contents($thisFrame);
                 }
 
@@ -180,7 +179,9 @@ class GifCreator
 
             $this->gif .= substr($this->frameSources[0], 6, 7);
             $this->gif .= substr($this->frameSources[0], 13, $cmap);
-            $this->gif .= "!\377\13NETSCAPE2.0\3\1".$this->encodeAsciiToChar($this->loop)."\0";
+            if ($this->loop !== 1) {
+                $this->gif .= "!\377\13NETSCAPE2.0\3\1".$this->encodeAsciiToChar($this->loop)."\0";
+            }
         }
     }
 
@@ -225,14 +226,14 @@ class GifCreator
             case '!':
 
                 $Locals_img = substr($Locals_tmp, 8, 10);
-                $Locals_tmp = substr($Locals_tmp, 18, strlen($Locals_tmp) - 18);
+                $Locals_tmp = substr($Locals_tmp, 18);
 
                 break;
 
             case ',':
 
                 $Locals_img = substr($Locals_tmp, 0, 10);
-                $Locals_tmp = substr($Locals_tmp, 10, strlen($Locals_tmp) - 10);
+                $Locals_tmp = substr($Locals_tmp, 10);
 
                 break;
         }
